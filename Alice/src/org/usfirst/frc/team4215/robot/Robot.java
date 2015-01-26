@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 
 /**
@@ -41,10 +42,14 @@ public class Robot extends SampleRobot {
 	
 	Talon elevator = new Talon(4);
 	Talon rackPinion = new Talon(5);
+	DigitalInput limitSwitch;
+	DigitalInput limitSwitch2;
 	
 	double tankLeft;
 	double tankRight;
 	double strafe;
+	double MAXELEVAT=.75;
+	double MINELEVAT=.15;
 	
 	private double MAXINPUT = .75;
     private double MININPUT = .15;
@@ -118,6 +123,25 @@ public class Robot extends SampleRobot {
     	backLeft.set(-tankLeft - strafe);
     	backRight.set(tankRight - strafe);
     	frontRight.set(tankRight + strafe);
+    }
+
+  public void elevateMethod() {
+    	limitSwitch = new DigitalInput(6);
+    	limitSwitch2 = new DigitalInput(7);
+    	elevation=ThirdStick.getY();
+    	
+    	if(elevation>0 && elevation<=.1 && limitSwitch.get())  {
+    	Elevator.set(MINELEVAT);
+    	}
+    	else if(elevation>.1 && elevation<=1 && limitSwitch.get())  {   
+    	Elevator.set(MAXELEVAT);
+    	}
+    	else if(elevation<0 && elevation>=-.1 && limitSwitch2.get())  {
+    	Elevator.set(-1*MINELEVAT);
+    	}
+    	else if(elevation<-.1 && elevation<=-1 && limitSwitch2.get())  {   
+    	Elevator.set(-1*MAXELEVAT);
+    	}
     }
 
     /**
